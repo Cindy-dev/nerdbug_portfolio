@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "747190153958",
+    "project_id": "nerdbug-d8ed6",
+    "storage_bucket": "nerdbug-d8ed6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747190153958:android:0590eedeb715e04fd90127",
+        "android_client_info": {
+          "package_name": "com.example.portfolio_nerdbug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "747190153958-f0vkj2jufdq4rgdfq7cbmbne81csc8t3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACBnX1BohMyje_9jRGu-l2l0ypGWyQ8AA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "747190153958-f0vkj2jufdq4rgdfq7cbmbne81csc8t3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "747190153958-slrc9h2j5ojuvuvegleg065jsborm3n2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.portfolioNerdbug"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
