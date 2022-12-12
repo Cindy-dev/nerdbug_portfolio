@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:portfolio_nerdbug/authentication/presentation/utilities/auth_strings.dart';
+import 'package:portfolio_nerdbug/home/presentation/utilities/strings.dart';
 import 'package:portfolio_nerdbug/utilities/device_size.dart';
-
+import '../../../app_controller/controllers/request_view_model.dart';
 import '../../../utilities/colors.dart';
 import '../../../utilities/navigators.dart';
+import '../../logic/signup_vm.dart';
 import '../screens/login_screen.dart';
+import '../utilities/dialog.dart';
+import 'authenticationButton.dart';
 import 'textform.dart';
 
 class SignupForm extends StatefulHookConsumerWidget {
@@ -32,13 +37,13 @@ class _SignupFormState extends ConsumerState<SignupForm> {
             child: Column(
               children: [
                 TextForm(
-                    hintText: 'Full name',
+                    hintText: SignupStrings.fName,
                     prefixIcon: const Icon(Icons.person,
                         color: AppColors.hintTextColor),
                     controller: _nameController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'name is required';
+                        return SignupStrings.nameVal;
                       } else {
                         return null;
                       }
@@ -47,17 +52,16 @@ class _SignupFormState extends ConsumerState<SignupForm> {
                   height: context.screenHeight() / 50,
                 ),
                 TextForm(
-                    hintText: 'Email address',
-                    prefixIcon: const Icon(Icons.email, color: AppColors.hintTextColor),
+                    hintText: SignupStrings.email,
+                    prefixIcon:
+                        const Icon(Icons.email, color: AppColors.hintTextColor),
                     controller: _emailController,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'email is required';
+                        return SignupStrings.eRequired;
                       }
-                      if (!RegExp(
-                              "^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*")
-                          .hasMatch(value)) {
-                        return 'Please input a valid email address';
+                      if (!RegExp(SignupStrings.regEmail).hasMatch(value)) {
+                        return SignupStrings.emailVal;
                       } else {
                         return null;
                       }
@@ -66,32 +70,32 @@ class _SignupFormState extends ConsumerState<SignupForm> {
                   height: context.screenHeight() / 50,
                 ),
                 TextForm(
-                   hintText: 'Phone number',
-                 prefixIcon:   const Icon(Icons.phone, color: AppColors.hintTextColor),
-                  controller:  _phoneController,
-                     validator:    (value) {
-                  if (value!.isEmpty) {
-                    return 'phone number is required';
-                  } else if (value.length < 11) {
-                    return 'Please input a valid phone number';
-                  } else {
-                    return null;
-                  }
-                }),
+                    hintText: SignupStrings.pNumber,
+                    prefixIcon:
+                        const Icon(Icons.phone, color: AppColors.hintTextColor),
+                    controller: _phoneController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return SignupStrings.pRequired;
+                      } else if (value.length < 11) {
+                        return SignupStrings.pVal;
+                      } else {
+                        return null;
+                      }
+                    }),
                 SizedBox(
                   height: context.screenHeight() / 50,
                 ),
-
                 TextForm(
-                  hintText: 'Password',
-                 prefixIcon: const Icon(Icons.lock, color: AppColors.hintTextColor),
-                 controller: _passwordController,
+                  hintText: SignupStrings.pass,
+                  prefixIcon:
+                      const Icon(Icons.lock, color: AppColors.hintTextColor),
+                  controller: _passwordController,
                   validator: (password) {
-                    Pattern pattern =
-                        r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$';
+                    Pattern pattern = SignupStrings.passReg;
                     RegExp regex = RegExp(pattern.toString());
                     if (!regex.hasMatch(password!)) {
-                      return 'Password should be 6 characters including\nlowercase and uppercase letters and at\nleast a symbol';
+                      return SignupStrings.passVal;
                     } else {
                       return null;
                     }
@@ -100,45 +104,48 @@ class _SignupFormState extends ConsumerState<SignupForm> {
                 SizedBox(
                   height: context.screenHeight() / 30,
                 ),
-                // Consumer(builder: (context, WidgetRef ref, child) {
-                //   final result = ref.watch(signupViewModelNotifierProvider);
-                //   ref.listen<RequestState>(signupViewModelNotifierProvider,
-                //       (previous, state) {
-                //     if (state is Success) {
-                //       navigatePush(context, const LoginScreen());
-                //     }
-                //   });
-                //   if (result is Loading) {
-                //     return const CircularProgressIndicator(
-                //       color: orangeColor,
-                //     );
-                //   } else {
-                //     return GestureDetector(
-                //         onTap: () {
-                //           if (!formKey.currentState!.validate()) {
-                //             // Invalid!
-                //             return;
-                //           }
-                //           ref
-                //               .read(signupViewModelNotifierProvider.notifier)
-                //               .signUp(
-                //                   _emailController.text,
-                //                   _passwordController.text,
-                //                   _phoneController.text,
-                //                   _nameController.text);
-                //         },
-                //         child: AuthenticationButton('Sign Up'));
-                //   }
-                // }),
+                Consumer(builder: (context, WidgetRef ref, child) {
+                  final result = ref.watch(signupViewModelNotifierProvider);
+                  ref.listen<RequestState>(signupViewModelNotifierProvider,
+                      (previous, state) {
+                    if (state is Success) {
+                      navigatePush(context, const LoginScreen());
+                    } else if (state is Error) {
+                      final error = state.error.toString();
+                      errorDialog(context, error, SignupStrings.eString);
+                    }
+                  });
+                  if (result is Loading) {
+                    return const CircularProgressIndicator(
+                      color: AppColors.bgColor,
+                    );
+                  } else {
+                    return GestureDetector(
+                        onTap: () {
+                          if (!formKey.currentState!.validate()) {
+                            // Invalid!
+                            return;
+                          }
+                          ref
+                              .read(signupViewModelNotifierProvider.notifier)
+                              .signUp(
+                                  _emailController.text,
+                                  _passwordController.text,
+                                  _phoneController.text,
+                                  _nameController.text);
+                        },
+                        child: AuthButton(SignupStrings.signup));
+                  }
+                }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      'Already have an account?',
+                      SignupStrings.acct,
                       style: TextStyle(
                           color: AppColors.boldTextColor,
                           fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins',
+                          fontFamily: FontStrings.fontName,
                           fontSize: 14),
                     ),
                     const SizedBox(
@@ -149,11 +156,11 @@ class _SignupFormState extends ConsumerState<SignupForm> {
                         navigatePush(context, const LoginScreen());
                       },
                       child: const Text(
-                        'Log In',
+                        SignupStrings.login,
                         style: TextStyle(
                             color: AppColors.bgColor,
                             fontWeight: FontWeight.w500,
-                            fontFamily: 'Poppins',
+                            fontFamily: FontStrings.fontName,
                             fontSize: 14),
                       ),
                     )

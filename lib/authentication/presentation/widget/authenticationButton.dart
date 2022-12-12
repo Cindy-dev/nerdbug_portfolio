@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_nerdbug/home/presentation/utilities/strings.dart';
 import 'package:portfolio_nerdbug/utilities/colors.dart';
 import 'package:portfolio_nerdbug/utilities/device_size.dart';
 
@@ -20,7 +21,7 @@ class AuthButton extends StatelessWidget {
         style: const TextStyle(
             color: AppColors.whiteColor,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
+            fontFamily: FontStrings.fontName,
             fontSize: 18),
       ),
     );

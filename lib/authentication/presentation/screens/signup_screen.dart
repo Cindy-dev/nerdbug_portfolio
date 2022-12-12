@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_nerdbug/authentication/presentation/utilities/auth_strings.dart';
+import 'package:portfolio_nerdbug/home/presentation/utilities/strings.dart';
 import 'package:portfolio_nerdbug/utilities/device_size.dart';
 
 import '../../../utilities/colors.dart';
@@ -16,16 +18,16 @@ class SignupScreen extends StatelessWidget {
         height: context.screenHeight(),
         color: AppColors.whiteBackground.withOpacity(.8),
         child: Column(
-          children: [
-            const Text(
-              'Sign Up',
+          children: const [
+             Text(
+              SignupStrings.signup,
               style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontFamily: 'Poppins',
+                  fontFamily: FontStrings.fontName,
                   fontSize: 20),
             ),
 
-            const SignupForm(),
+            SignupForm(),
           ],
         ),
       ),
